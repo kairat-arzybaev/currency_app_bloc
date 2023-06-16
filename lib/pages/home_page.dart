@@ -12,6 +12,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _selectedCurrency = 'USD';
+  
+  final List<DropdownMenuItem<String>> _items =
+      ['USD', 'EUR', 'RUB'].map((currency) {
+    return DropdownMenuItem<String>(
+      value: currency,
+      child: Text(currency),
+    );
+  }).toList();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,12 +40,7 @@ class _HomePageState extends State<HomePage> {
               dropdownColor: Colors.deepOrange,
               iconEnabledColor: Colors.white,
               value: _selectedCurrency,
-              items: ['USD', 'EUR', 'RUB'].map((currency) {
-                return DropdownMenuItem<String>(
-                  value: currency,
-                  child: Text(currency),
-                );
-              }).toList(),
+              items: _items,
               onChanged: (value) {
                 setState(() {
                   _selectedCurrency = value!;

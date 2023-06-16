@@ -9,20 +9,28 @@ class CurrencyBloc extends Bloc<CurrencyEvent, CurrencyState> {
   final CurrencyRepository _currencyRepository;
   String _selectedCurrency = 'USD';
   CurrencyBloc(this._currencyRepository) : super(CurrencyInitial()) {
-    on<FetchCurrencies>((event, emit) async {
-      emit(CurrencyLoading());
+    on<FetchCurrencies>(_onFetchCurrencies);
+    on<CurrencyChanged>(_currencyChanged);
+  }
 
-      try {
-        final currencies =
-            await _currencyRepository.fetchCurrencies(_selectedCurrency);
-        emit(CurrencyLoaded(currencies));
-      } catch (e) {
-        emit(CurrencyError(e.toString()));
-      }
-    });
-    on<CurrencyChanged>((event, emit) async {
-      _selectedCurrency = event.currency;
-      add(FetchCurrencies());
-    });
+  Future<void> _onFetchCurrencies(
+    FetchCurrencies event,
+    Emitter<CurrencyState> emit,
+  ) async {
+    emit(CurrencyLoading());
+
+    try {
+      final currencies =
+          await _currencyRepository.fetchCurrencies(_selectedCurrency);
+      emit(CurrencyLoaded(currencies));
+    } catch (e) {
+      emit(CurrencyError(e.toString()));
+    }
+  }
+
+  Future<void> _currencyChanged(
+      CurrencyChanged event, Emitter<CurrencyState> emit) async {
+    _selectedCurrency = event.currency;
+    add(FetchCurrencies());
   }
 }
